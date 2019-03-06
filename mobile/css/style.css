@@ -1,0 +1,21 @@
+body {
+    height: 100%;
+    width: 100%;
+    background: url("../images/bbc.png");
+    background-color: #eeeeee;
+}
+
+#main {
+    width: 100%;
+    text-align: center;
+}
+
+#main table {
+    background: transparent !important;
+    color: black;
+}
+
+#main table button {
+    width: 4rem;
+    height: 1.5rem;
+}

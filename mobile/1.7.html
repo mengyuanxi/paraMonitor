@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <link rel="stylesheet" href="lib/layui/css/layui.mobile.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <title>变压器冷控箱在线监测</title>
+    <style>
+        #main table button {
+            width: 4rem;
+            height: 1.5rem;
+        }
+    </style>
+
+</head>
+
+<body>
+    <p>
+        <a class="layui-btn layui-btn-primary" href="1nav.html">
+            < 返回 </a>
+    </p>
+    <div id="main">
+        <p id="title">
+            <button class="layui-btn layui-btn-radius layui-btn-primary" style="text-align:center">
+                        变压器冷控箱在线监测
+                    </button>
+        </p>
+        <table class=" layui-table">
+            <colgroup>
+                <col width="200 ">
+                <col width="150 ">
+                <col width="150 ">
+            </colgroup>
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>电源故障</td>
+                    <td>
+                        1、1电源<br>1、2电源
+                    </td>
+                    <td>
+                        <button class="layui-btn" style="background:pink"></button><br>
+                        <button class="layui-btn" style="background:pink;margin-top: 0.5rem;"></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>风机故障</td>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" style="background:gold"></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>油泵故障</td>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" style="background:darkred"></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>油流故障</td>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" style="background:rebeccapurple"></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>冷却器全停</td>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" style="background:blue"></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>冷却器全停跳闸信号启动</td>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>
