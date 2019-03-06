@@ -1,0 +1,76 @@
+body {
+    height: 100%;
+    width: 100%;
+    background: url("../images/bbc.png");
+    background-color: #eeeeee;
+}
+
+
+/*header-bg*/
+
+.wrap {
+    margin: 0 auto;
+}
+
+.header {
+    background: #373d41;
+    height: 50px;
+}
+
+.header .left {
+    margin-left: 120px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 50px;
+}
+
+.header .right {
+    float: right;
+    margin-right: 100px;
+    font-size: 0;
+    -moz-user-select: none;
+    -webkit-user-select: none；
+}
+
+.header .right span {
+    display: inline-block;
+    padding: 0 15px;
+    border-right: 1px solid #2a2f32;
+    height: 50px;
+    line-height: 50px;
+    color: #fff;
+    font-size: 14px;
+    transition: all .3s;
+    cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none
+}
+
+.header .right span:hover {
+    background-color: #333;
+}
+
+#logo {
+    position: absolute;
+    left: 50px;
+    top: -4px;
+}
+
+
+/* main内容 */
+
+#main {
+    width: 100%;
+    text-align: center;
+}
+
+#main table {
+    background: transparent !important;
+    color: black;
+}
+
+#main table button {
+    width: 7rem;
+    height: 2.5rem;
+}
