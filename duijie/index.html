@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <link rel="stylesheet" href="lib/layui/css/layui.mobile.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>色谱在线监测</title>
+    <style>
+        #chooseStation button {
+            width: 6.5rem;
+        }
+        
+        #chooseStation p {
+            margin-top: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        #chooseStation .layui-row {
+            height: 10.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="layui-fluid">
+        <div class="layui-row">
+            <p id="title" class="layui-col-xs12">
+                <button class="layui-btn layui-btn-radius layui-btn-primary" style="text-align:center">
+                    首页
+                </button>
+            </p>
+        </div>
+
+        <div id="chooseStation">
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <button class="layui-btn"></button>
+                    <p>500kv变电站</p>
+                </div>
+                <div class="layui-col-xs6">
+                    <button class="layui-btn"></button>
+                    <p>35kv变电站</p>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <button class="layui-btn layui-btn-danger"></button>
+                    <p>220kv变电站</p>
+                </div>
+                <div class="layui-col-xs6">
+                    <button class="layui-btn"></button>
+                    <p>35kv变电站</p>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <button class="layui-btn"></button>
+                    <p>500kv变电站</p>
+                </div>
+                <div class="layui-col-xs6">
+                    <button class="layui-btn"></button>
+                    <p>35kv变电站</p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-xs12">
+                <button class="layui-btn layui-btn-radius layui-btn-warm textACenter" style="color:#000">
+                         告警信息
+                     </button>
+                <textarea id="alarmInfo" class="layui-textarea" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        $(function() {
+            if (tokenValue == '') {
+                alert("您还未登录，请先登录");
+                return;
+            }
+
+            // 获取用户权限下的所有deviceid
+            var authorDevices = new Array();
+            $.ajax({
+                type: "get",
+                url: basePath + "/devicelist/getDeviceID",
+                contentType: "application/json",
+                dataType: "json",
+                data: {
+                    "token": tokenValue,
+                    "hash": "test",
+                },
+                async: false,
+                success: function(response) {
+                    // 是否响应成功
+                    if (response.status != '100') {
+                        alert(response.msg);
+                        return;
+                    }
+                    // 数据长度
+                    var dataLength = response.data.length
+                    if (dataLength == undefined) {
+                        authorDevices.push(response.data);
+                    } else {
+                        for (let index = 0; index < response.data.length; index++) {
+                            const element = response.data[index];
+                            authorDevices.push(element);
+                        }
+                    }
+                }
+            });
+
+
+            // 获取权限设备的全部报警信息
+            for (let i = 0; i < authorDevices.length; i++) {
+                const singleDevice = authorDevices[i];
+                console.log(singleDevice)
+                $.ajax({
+                    type: "get",
+                    url: basePath + "/alarm",
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: {
+                        "token": tokenValue,
+                        "hash": "test",
+                        "devid": singleDevice,
+                    },
+                    success: function(response) {
+                        if (response.status != 100) {
+                            alert(response.msg);
+                            return;
+                        }
+                        if (response.data.list == 0) {
+                            // 正常状态的颜色
+                            return;
+                        }
+
+                        for (let j = 0; j < response.data.list.length; j++) {
+                            const oneAlarm = response.data.list[j];
+                            // 如果已经恢复正常，则跳过
+                            if (oneAlarm.active == false) {
+                                break;
+                            }
+                            $('#alarmInfo').append(oneAlarm.alarmdesc);
+                        }
+                    }
+                });
+            }
+
+
+            console.log($('#alarmInfo').val())
+                // 如果报警信息为空，则显示相应的信息-暂无报警
+            if ($('#alarmInfo').val() == '') {
+                $('#alarmInfo').val("1435101185号设备：冷却水温度过高");
+            }
+        })
+    </script>
+</body>
+
+</html>

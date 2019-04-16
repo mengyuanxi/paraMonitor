@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <link rel="stylesheet" href="lib/layui/css/layui.mobile.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>DI数字量入</title>
+</head>
+
+<body>
+    <div class="main">
+        <p id="title">
+            <button class="layui-btn layui-btn-radius layui-btn-primary" style="text-align:center">
+                DI数字量入
+            </button>
+        </p>
+        <div id="content">
+
+        </div>
+    </div>
+
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // setInterval(
+            // function() {
+            // $.ajax({
+            //     type: "get",
+            //     url: "http://lanpufeng.com.cn:81/api/login?id=hejuntao&pwd=1735c8cad997c838d3a4cb22f01f5f29",
+            //     async: false,
+            //     processData: false,
+            //     dataType: "jsonp",
+            //     success: function(response) {
+            //         alert(response);
+            //     },
+            // });
+
+            var urlPath = "http://lanpufeng.com.cn:81/api/device/di/123456789014/1/" +
+                "AEC42A8B5D47080FB10F48A5E738CD262B440161418195310B8D8E1716177A2D20A6F2D40C7E9A3E424CB4EDDBAEF2F195D834CAA6F489A30EB96935442079EBC08A231E4B797AD2C20FA16BE1CB9B5F6B5B48A2C3A18D824C81EB9458FE5417";
+            $.ajax({
+                type: "get",
+                url: urlPath,
+                async: false,
+                processData: false,
+                dataType: "jsonp",
+                // jsonp: "callback",
+                // jsonpCallback: "success_jsonpCallback",
+                success: function(json) {
+                    console.log(json);
+                }
+            });
+            // $.jsonp({
+            //     "url": urlPath,
+            //     success: function(response) {
+            //         console.log(response);
+            //         alert(response.success);
+            //     },
+            //     error: function(response) {
+            //         console.log(response);
+            //         alert(response.success);
+            //     }
+            // });
+            // dataobj = htmlobj.responseText;
+            // var obj = eval('(' + dataobj + ')');
+            // var data1 = obj['data'][0];
+            // console.log(data1);
+            // data1 = [];
+            // drawNodeOne(data1);
+
+            // check(obj);
+            // }
+            //, 500
+            // );
+        });
+
+        // function drawNodeOne(data) {
+        //     var myChart = echarts.init(document.getElementById('node1'));
+        //     data = [
+        //         ["18:20:11", 21],
+        //         ["18:20:41", 21],
+        //         ["18:20:41", 21],
+        //         ["18:21:11", 21],
+        //         ["18:21:41", 21],
+        //         ["18:22:11", 26],
+        //         ["18:22:41", 26],
+        //         ["18:23:11", 23],
+
+        //     ];
+
+        //     var dateList = data.map(function(item) {
+        //         return item[0];
+        //     });
+        //     var valueList = data.map(function(item) {
+        //         return item[1];
+        //     });
+
+        //     option = {
+        //         // Make gradient line here
+        //         visualMap: [{
+        //             show: false,
+        //             type: 'continuous',
+        //             seriesIndex: 0,
+        //             min: 0,
+        //             max: 400
+        //         }],
+        //         title: [{
+        //             left: 'center',
+        //             text: '1号节点温度变化曲线'
+        //         }],
+        //         tooltip: {
+        //             trigger: 'axis'
+        //         },
+        //         xAxis: [{
+        //             data: dateList,
+        //             splitLine: {
+        //                 show: true
+        //             }
+        //         }],
+        //         yAxis: {
+        //             splitLine: {
+        //                 show: true
+        //             }
+        //         },
+        //         grid: [{
+        //             bottom: '15%'
+        //         }, {
+        //             top: '15%'
+        //         }],
+        //         series: [{
+        //             type: 'line',
+        //             showSymbol: false,
+        //             data: valueList,
+        //             areaStyle: {}
+        //         }]
+        //     };
+        //     myChart.setOption(option);
+        // }
+    </script>
+</body>
+
+</html>

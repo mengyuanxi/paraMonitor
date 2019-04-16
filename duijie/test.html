@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <link rel="stylesheet" href="lib/layui/css/layui.mobile.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>DI数字量入</title>
+</head>
+
+<body>
+    <div class="main">
+        <p id="title">
+            <button class="layui-btn layui-btn-radius layui-btn-primary" style="text-align:center">
+                DI数字量入
+            </button>
+        </p>
+        <div id="content">
+
+        </div>
+    </div>
+
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script>
+        var basePath = "http://s1.anylinkcloud.com:8600";
+        var tokenValue = '09957541-1182-45ce-adb9-8ba6ff7eb301';
+        // 登录
+        var jsonString = {
+            name: "duobiy",
+            password: "duobiy01",
+            hash: "test"
+        }
+
+        $.ajax({
+            type: "post",
+            url: basePath + "/user/login",
+            contentType: "application/json",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(jsonString),
+            // data: jsonString,
+            success: function(response) {
+                console.log(response);
+                tokenValue = response.data;
+                // if (response.status == 100) {
+                //     tokenValue = response.data;
+                // }
+            }
+        });
+
+
+        // 获取devicelist
+        var jsonString = {
+            "token": tokenValue,
+            "hash": "test"
+        }
+        $.ajax({
+            type: "get",
+            url: basePath + "/devicelist",
+            contentType: "application/json",
+            dataType: "json",
+            // data: JSON.stringify(jsonString),
+            data: jsonString, // 此处不需要stringify?
+            async: false,
+            success: function(response) {
+                console.log(response);
+            }
+        });
+
+        // // 获取用户有权限的deviceID -- getDeviceID
+        // var jsonString2 = {
+        //     "token": tokenValue,
+        //     "hash": "test",
+        // };
+        // var deviceid = '';
+        // $.ajax({
+        //     type: "get",
+        //     url: basePath + "/devicelist/getDeviceID",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     // data: JSON.stringify(jsonString2),
+        //     data: jsonString2, // 此处不需要stringify?
+        //     async: false,
+        //     success: function(response) {
+        //         console.log(response);
+        //         deviceid = response.data;
+        //         console.log(deviceid)
+        //     }
+        // });
+
+
+        // // 1.2.4获取某个设备的所有数据项 -- deviceid用getDeviceID获取有权限的
+        // var jsonString2 = {
+        //     "token": tokenValue,
+        //     "hash": "test",
+        //     "deviceid": deviceid
+        // }
+        // $.ajax({
+        //     type: "get",
+        //     url: basePath + "/dataitemlist/getDataItemList",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     // data: JSON.stringify(jsonString2),
+        //     data: jsonString2, // 此处不需要stringify?
+        //     success: function(response) {
+        //         console.log(response);
+        //     }
+        // });
+
+
+        // // 多租户获取token（未知账户）
+        // var jsonString3 = {
+        //     "tenantEname": "test_tenant",
+        //     "name": "duobiy",
+        //     "password": "duobiy01",
+        //     "hash": "test",
+        // }
+        // $.ajax({
+        //     type: "post",
+        //     url: basePath + "/user/getToken",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     data: JSON.stringify(jsonString3),
+        //     // data: jsonString3, // 此处不需要stringify?
+        //     success: function(response) {
+        //         console.log(response);
+        //     }
+        // });
+
+
+
+        // 获取网关序列号 -- 错
+        var jsonString4 = {
+            "token": tokenValue
+        }
+        $.ajax({
+            type: "get",
+            url: basePath + "/agentList",
+            contentType: "application/json",
+            dataType: "json",
+            // data: JSON.stringify(jsonString4),
+            data: {
+                token: tokenValue
+            }, // 此处不需要stringify?
+            success: function(response) {
+                console.log(response);
+            }
+        });
+
+
+        // // 空数组 - rule
+        // $.ajax({
+        //     type: "get",
+        //     url: basePath + "/rule/getRuleByDataItemName",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     // data: JSON.stringify(jsonString2),
+        //     // data: jsonString2, // 此处不需要stringify?
+        //     data: {
+        //         "token": tokenValue,
+        //         "hash": "test",
+        //         "devid": deviceid
+        //     },
+        //     success: function(response) {
+        //         console.log(response);
+        //     }
+        // });
+
+        // // 获取报警
+        // $.ajax({
+        //     type: "get",
+        //     url: basePath + "/alarm",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     // data: JSON.stringify(jsonString2),
+        //     // data: jsonString2, // 此处不需要stringify?
+        //     data: {
+        //         "token": tokenValue,
+        //         "hash": "test",
+        //         "devid": deviceid
+        //     },
+        //     success: function(response) {
+        //         console.log(response);
+        //     }
+        // });
+
+        // // 获取实时数据(多个设备)
+        // $.ajax({
+        //     type: "get",
+        //     url: basePath + "/currentdata/getDeviceCurrentData",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     // data: JSON.stringify(jsonString2),
+        //     // data: jsonString2, // 此处不需要stringify?
+        //     data: {
+        //         "token": tokenValue,
+        //         "hash": "test",
+        //         "deviceIds": deviceid + "," + deviceid,
+        //     },
+        //     success: function(response) {
+        //         console.log(response);
+        //     }
+        // });
+
+        // 获取历史数据
+        // $.ajax({
+        //     type: "get",
+        //     url: basePath + "/history/forids",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     data: {
+        //         "token": tokenValue,
+        //         "hash": "test",
+        //         "deviceIds": deviceid
+        //     },
+        //     // data: jsonString2, // 此处不需要stringify?
+        //     success: function(response) {
+        //         console.log(response);
+        //     },
+        // });
+
+        // // 控制 - 无效的token
+        // var jsonString = {
+        //     "token": tokenValue,
+        //     "hash": "test",
+        //     "devid": deviceid,
+        // };
+        // $.ajax({
+        //     type: "PUT",
+        //     url: basePath + "/control/v2.1",
+        //     contentType: "application/json",
+        //     dataType: "json",
+        //     // data: JSON.stringify(jsonString),
+        //     // data: jsonString, // 此处不需要stringify?
+        //     data: {
+        //         "token": tokenValue,
+        //         "hash": "test",
+        //         "devid": deviceid,
+        //         "value": 0,
+        //         "itemid": 48
+        //     },
+        //     success: function(response) {
+        //         console.log(response);
+        //     }
+        // });
+
+
+        $.ajax({
+            type: "post",
+            url: basePath + "/agentList/condition",
+            contentType: "application/json",
+            dataType: "json",
+            // data: JSON.stringify(jsonString),
+            // data: jsonString, // 此处不需要stringify?
+            data: {
+                "token": tokenValue,
+                "hash": "test",
+                "agentIds": []
+            },
+            success: function(response) {
+                console.log(response);
+            }
+        });
+    </script>
+</body>
+
+</html>
