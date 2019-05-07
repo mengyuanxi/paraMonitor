@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="lib/layui/css/layui.css">
-    <link rel="stylesheet" href="lib/layui/css/layui.mobile.css">
+    <link rel="stylesheet" type="text/css" href="css/layui.css">
+    <link rel="stylesheet" type="text/css" href="css/layui.mobile.css">
     <link rel="stylesheet" href="css/style.css">
     <title>色谱在线监测</title>
     <style>
@@ -19,7 +19,7 @@
             font-size: 1.5rem;
         }
         
-        #chooseStation .layui-row {
+        #chooseStation .layui-col-xs6 {
             height: 10.5rem;
         }
     </style>
@@ -36,35 +36,13 @@
         </div>
 
         <div id="chooseStation">
-            <div class="layui-row">
-                <div class="layui-col-xs6">
-                    <button class="layui-btn"></button>
-                    <p>500kv变电站</p>
-                </div>
-                <div class="layui-col-xs6">
-                    <button class="layui-btn"></button>
-                    <p>35kv变电站</p>
-                </div>
+            <div class="layui-col-xs6">
+                <button class="layui-btn"></button>
+                <p>00000号设备</p>
             </div>
-            <div class="layui-row">
-                <div class="layui-col-xs6">
-                    <button class="layui-btn layui-btn-danger"></button>
-                    <p>220kv变电站</p>
-                </div>
-                <div class="layui-col-xs6">
-                    <button class="layui-btn"></button>
-                    <p>35kv变电站</p>
-                </div>
-            </div>
-            <div class="layui-row">
-                <div class="layui-col-xs6">
-                    <button class="layui-btn"></button>
-                    <p>500kv变电站</p>
-                </div>
-                <div class="layui-col-xs6">
-                    <button class="layui-btn"></button>
-                    <p>35kv变电站</p>
-                </div>
+            <div class="layui-col-xs6">
+                <button class="layui-btn"></button>
+                <p>111111号设备</p>
             </div>
         </div>
         <div class="layui-row">
@@ -82,12 +60,17 @@
     <script src="js/common.js"></script>
     <script>
         $(function() {
+            // 设置暂无报警的标志位
+            var noAlarmInfo = true;
+            var tokenValue = cookie.get("tokenValue");
             if (tokenValue == '') {
                 alert("您还未登录，请先登录");
                 return;
             }
 
-            // 获取用户权限下的所有deviceid
+            /**
+             * 获取用户权限下的所有deviceid
+             */
             var authorDevices = new Array();
             $.ajax({
                 type: "get",
@@ -118,11 +101,14 @@
                 }
             });
 
+            /*
+             * 获取所有权限设备的全部报警信息
+             */
 
-            // 获取权限设备的全部报警信息
+            // 对用户权限的所有设备进行遍历，查看其状态与报警情况
             for (let i = 0; i < authorDevices.length; i++) {
                 const singleDevice = authorDevices[i];
-                console.log(singleDevice)
+                const chooseStation = $('#chooseStation');
                 $.ajax({
                     type: "get",
                     url: basePath + "/alarm",
@@ -138,28 +124,52 @@
                             alert(response.msg);
                             return;
                         }
-                        if (response.data.list == 0) {
-                            // 正常状态的颜色
-                            return;
+
+                        /**
+                         * 测试有报警的情况（生成某设备的报警列表json对象数组）
+                         */
+                        response.data.list = [];
+                        for (let index = 0; index < 3; index++) {
+                            var testJsonStr = `{"active": true, "alarmdesc": "冷却水温度过高","alarmid":209,
+                            "alarmname":"alarm",
+                            "deviceid":1435066367,
+                            "happentime":1532658207189,
+                            "htime":1532657631003,
+                            "ruleid":6,
+                            "severity":12,
+                            "thisDataItemName":"COOLING WATER TEMP.","thisDataItemValue":"7229.3078125"}`;
+                            var testJson = JSON.parse(testJsonStr);
+                            response.data.list.push(testJson);
                         }
 
+                        // 添加设备按钮放入列表；同时显示此设备的报警情况，放入文本框中
+                        var $colDiv = $('<div></div>');
+                        $colDiv.addClass("layui-col-xs6");
+                        var $devButton = $('<button></button>');
+                        var $devNameP = `<p>${singleDevice}号设备</p>`;
+                        // - 先统一设置为绿色按钮（无报警），如果有报警在之后修改为红色
+                        $devButton.addClass("layui-btn");
+                        // - 动态绑定 点击查看设备具体信息 的功能
+                        $devButton.bind('click', function() {
+                            window.location.href = "deviceDetail.html?deviceId=" + singleDevice;
+                        })
+
+                        // - 如果查找到的报警信息不为空且未恢复，则修改为红色报警按钮
                         for (let j = 0; j < response.data.list.length; j++) {
                             const oneAlarm = response.data.list[j];
-                            // 如果已经恢复正常，则跳过
-                            if (oneAlarm.active == false) {
-                                break;
+                            // 显示报警状态的告警信息
+                            if (oneAlarm.active == true) {
+                                $('#alarmInfo').append(oneAlarm.deviceid + "号设备：" + oneAlarm.alarmdesc + ",值为：" +
+                                    oneAlarm.thisDataItemValue + "\n");
+                                $devButton.addClass("layui-btn-danger")
                             }
-                            $('#alarmInfo').append(oneAlarm.alarmdesc);
                         }
+                        // - 添加该项进入设备列表
+                        $colDiv.append($devButton);
+                        $colDiv.append($devNameP);
+                        chooseStation.append($colDiv);
                     }
                 });
-            }
-
-
-            console.log($('#alarmInfo').val())
-                // 如果报警信息为空，则显示相应的信息-暂无报警
-            if ($('#alarmInfo').val() == '') {
-                $('#alarmInfo').val("1435101185号设备：冷却水温度过高");
             }
         })
     </script>

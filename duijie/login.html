@@ -1,0 +1,104 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <link rel="stylesheet" type="text/css" href="css/layui.css">
+    <link rel="stylesheet" type="text/css" href="css/layui.mobile.css">
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+
+</head>
+
+<body>
+    <div class="login-logo circle text-center">
+        <img src="images/logo.png" alt="">
+    </div>
+
+    <form name="forms" class="login-cont">
+        <ul>
+            <li><input type="text" placeholder="请输入您的账号" id="username"></li>
+            <li>
+                <span id="box"><input type="password" value="" name="password" id="password" placeholder="请输入您的密码"></span>
+                <span id="click"><a href="javascript:ps()" class="iconfont icon-biyan"></a></span></li>
+        </ul>
+        <a href="javascript:;" class="button text-center block" id="submit">登 录</a>
+        <!-- <a href="javascript:;" class="text-center block font-color">忘记密码？</a>
+        <p class="text-center">没有账号？ <a href="javascript:;" class="font-color">立即注册</a></p> -->
+    </form>
+
+
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/layer.js"></script>
+    <script type="text/javascript">
+        function ps() {
+            if (this.forms.password.type = "password")
+                box.innerHTML = "<input type=\"html\" name=\"password\" size=\"20\" value=" + this.forms.password.value + ">";
+            click.innerHTML = "<a href=\"javascript:txt()\" class=\"iconfont icon-open-eye\"></a>"
+        }
+
+        function txt() {
+            if (this.forms.password.type = "text")
+                box.innerHTML = "<input type=\"password\" name=\"password\" size=\"20\" value=" + this.forms.password.value + ">";
+            click.innerHTML = "<a href=\"javascript:ps()\" class=\"iconfont icon-biyan\"></a>"
+        }
+
+        $('#submit').click(function() {
+            var username = $('#username').val();
+            var password = $('#password').val();
+            if (username == '' || password == '') {
+                //提示层msg
+                layer.open({
+                    content: '请将信息填写完全',
+                    skin: 'msg',
+                    time: 2 //2秒后自动关闭
+                });
+            } else {
+                // 登录
+                var jsonString = {
+                    "name": username,
+                    "password": password,
+                    "hash": "test"
+                }
+
+                $.ajax({
+                    type: "post",
+                    url: basePath + "/user/login",
+                    contentType: "application/json",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(jsonString),
+                    success: function(response) {
+                        if (response.status == 100) {
+                            cookie.set("tokenValue", response.data, 1);
+                            // 提示登录成功
+                            layer.open({
+                                content: '登陆成功',
+                                skin: 'msg',
+                                time: 1, //1秒后自动关闭
+                                end: function() {
+                                    window.location.href = 'index.html';
+                                }
+                            });
+                        } else {
+                            // 提示登录失败
+                            layer.open({
+                                content: response.msg,
+                                skin: 'msg',
+                                time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                });
+            }
+        })
+    </script>
+
+
+</body>
+
+</html>
