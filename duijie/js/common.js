@@ -1,3 +1,6 @@
+// 基础访问地址
+basePath = "http://s1.anylinkcloud.com:8600";
+
 var cookie = {
     set: function(key, val, time) { //设置cookie方法
         var date = new Date(); //获取当前时间
@@ -26,4 +29,39 @@ var cookie = {
     }
 }
 
-basePath = "http://s1.anylinkcloud.com:8600";
+/**
+ * 解析url，获取地址参数
+ */
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+}
+
+/**
+ * 
+//  */
+// function getHisDataOneItem(itemid) {
+//     $.ajax({
+//         type: "get",
+//         url: basePath + "/historydata",
+//         contentType: "application/json",
+//         dataType: "json",
+//         data: {
+//             "token": tokenValue,
+//             "hash": "test",
+//             "deviceid": deviceid,
+//             "datatitemid": itemid,
+//         },
+//         success: function (response) {
+
+//         }
+//     })
+// }
+
+// /**
+//  * 获取单个数据项的实时数据（配合图表实时刷新显示）
+//  */
+
+//  function getCurDataOneItem(itemid) {}

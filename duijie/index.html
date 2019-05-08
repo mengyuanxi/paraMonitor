@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="css/layui.css">
     <link rel="stylesheet" type="text/css" href="css/layui.mobile.css">
     <link rel="stylesheet" href="css/style.css">
-    <title>色谱在线监测</title>
+    <title>查看所有权限列表</title>
     <style>
         #chooseStation button {
             width: 6.5rem;
@@ -105,7 +105,7 @@
              * 获取所有权限设备的全部报警信息
              */
 
-            // 对用户权限的所有设备进行遍历，查看其状态与报警情况
+            // 对用户权限的所有设备进行遍历，查看其状态与报警情况。同时在列表渲染该设备按钮、以及按需显示报警信息
             for (let i = 0; i < authorDevices.length; i++) {
                 const singleDevice = authorDevices[i];
                 const chooseStation = $('#chooseStation');
@@ -126,7 +126,7 @@
                         }
 
                         /**
-                         * 测试有报警的情况（生成某设备的报警列表json对象数组）
+                         * 生成测试样例，测试有报警的情况（生成某设备的报警列表json对象数组）
                          */
                         response.data.list = [];
                         for (let index = 0; index < 3; index++) {
@@ -151,7 +151,7 @@
                         $devButton.addClass("layui-btn");
                         // - 动态绑定 点击查看设备具体信息 的功能
                         $devButton.bind('click', function() {
-                            window.location.href = "deviceDetail.html?deviceId=" + singleDevice;
+                            window.location.href = "deviceDetail.html?deviceid=" + singleDevice;
                         })
 
                         // - 如果查找到的报警信息不为空且未恢复，则修改为红色报警按钮

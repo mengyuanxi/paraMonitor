@@ -24,7 +24,7 @@
 
 <body>
     <p>
-        <a class="layui-btn layui-btn-primary" href="#">
+        <a class="layui-btn layui-btn-primary" href="index.html">
             < 返回 </a>
     </p>
     <div id="main" class="layui-fluid">
@@ -84,13 +84,13 @@
     <script src="js/common.js"></script>
     <script>
         $(function() {
-            var str = window.location.href;
-            var deviceid = str.substr(str.indexOf('=') + 1);
+            var deviceid = getQueryString("deviceid");
             var tokenValue = cookie.get("tokenValue");
+            var errorItem = []; // 引发报警的数据项
 
-            if (tokenValue == '') {
+            if (tokenValue == undefined) {
                 alert("您还未登录，请先登录");
-                return;
+                window.location.href = "login.html"
             }
 
             /**
@@ -101,10 +101,11 @@
                 url: basePath + "/alarm",
                 contentType: "application/json",
                 dataType: "json",
+                async: false,
                 data: {
                     "token": tokenValue,
                     "hash": "test",
-                    "devid": singleDevice,
+                    "devid": deviceid,
                 },
                 success: function(response) {
                     if (response.status != 100) {
@@ -112,14 +113,15 @@
                         return;
                     }
                     /**
+                     * 生成测试样例
                      * 测试有报警的情况（生成某设备的报警列表json对象数组）
                      */
                     response.data.list = [];
-                    for (let index = 0; index < 3; index++) {
+                    for (let index = 0; index < 2; index++) {
                         var testJsonStr = `{"active": true, "alarmdesc" : "冷却水温度过高"
                         ,"alarmid":209, "alarmname" :"alarm", "deviceid" :1435066367, "happentime"
                         :1532658207189, "htime" :1532657631003, "ruleid" :6, "severity" :12, "thisDataItemName"
-                        :"COOLING WATER TEMP.","thisDataItemValue":"7229.3078125"}`;
+                        :"COOLING WATER TEM${index}.","thisDataItemValue":"7229.30781${index}${index}${index}"}`;
                         var
                             testJson = JSON.parse(testJsonStr);
                         response.data.list.push(testJson);
@@ -131,101 +133,98 @@
                         //显示报警状态的告警信息 
                         if (oneAlarm.active == true) {
                             $('#alarmInfo').append(oneAlarm.deviceid + "号设备：" +
-                                oneAlarm.alarmdesc + ",值为：" + oneAlarm.thisDataItemValue + "\n");
-                            $devButton.addClass("layui-btn-danger")
+                                oneAlarm.alarmdesc + "。错误数据项为：" + oneAlarm.thisDataItemName + "，对应值为：" +
+                                oneAlarm.thisDataItemValue + "\n");
+                            errorItem.push(oneAlarm.thisDataItemName);
                         }
                     }
+                    console.log(errorItem)
                 }
             })
 
+            /**
+             * 动态渲染表格 - 显示设备所有参数列表（所有数据项）
+             */
+            $.ajax({
+                type: "get",
+                url: basePath + "/dataitemlist/getDataItemList",
+                contentType: "application/json",
+                dataType: "json",
+                data: {
+                    "token": tokenValue,
+                    "hash": "test",
+                    "deviceid": deviceid,
+                },
+                success: function(response) {
+                    console.log(response)
+                    if (response.status != '100') {
+                        alert(response.msg);
+                        return;
+                    }
 
-        });
+                    /**
+                     * 生成测试样例（重构参数列表数组）
+                     */
+                    response.data = [];
+                    for (let index = 0; index < 3; index++) {
+                        var jsonString = `{"devid":1435066367,"deviceName":"ra-device","itemid":${index+1},"config":"","datatype":"a","datatypeName":"数值","driverid":29,"driverName":"libtremoteplc","did":0,"itemname":"COOLING WATER TEM${index}.","itemalias":null,"readonly":0,"frequency":120000,"dataAddress":null,"hex":null,"precision":null}`;
+                        var obj = JSON.parse(jsonString); // 将上述字符串转成json
+                        response.data.push(obj); // 添加到数组中
+                    }
 
+                    // 动态渲染参数列表，并且判断是否报警而显示不同颜色
+                    for (let i = 0; i < response.data.length; i++) {
+                        const element = response.data[i];
+                        var errorFlag = 0;
+                        var $tr = $('<tr> </tr>');
+
+                        var $td2 = `<td data-label="数据项id" class="layui-badge layui-bg-green">${element.itemid}</td>`;
+                        var $td3 = `<td data-label="数据项名称" class="layui-badge  layui-bg-green">${element.itemname}</td>`;
+                        // 如果该数据项属于出错数据项数组，则显示为红色,并设该项的errorFlag为1
+                        if (errorItemContains(element.itemname, errorItem)) {
+                            $td2 = `<td data-label="数据项id" class="layui-badge">${element.itemid}</td>`;
+                            $td3 = `<td data-label="数据项名称" class="layui-badge">${element.itemname}</td>`;
+                            errorFlag = 1;
+
+                        }
+                        var $td4 = `<td data-label="数据项别名">${element.itemalias}</td>`;
+                        if (element.itemalias == null) {
+                            $td4 = `<td data-label="数据项别名">暂无记录</td>`;
+                        }
+                        var $td5 = `<td data-label="数据类型名称">${element.datatypeName}</td>`;
+                        var $td6 = `<td data-label="驱动名称">${element.driverName}</td>`;
+                        var $td7 =
+                            `<td data-label="数据采集频率(ms)">${element.frequency}</td>`;
+                        var $td8 = `<td><button class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary
+                                        textACenter">可写</button> </td>`;
+                        if (element.readonly == 0) {
+                            $td8 = `<td><button class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal
+                                        textACenter">只读</button> </td>`;
+                        }
+                        // 绑定点击查看具体信息事件
+                        $tr.bind('click', function() {
+                            window.location.href = "deviceItemDetail.html?deviceid=" + deviceid + "&itemid=" +
+                                element.itemid + "&error=" + errorFlag;
+                        })
+                        $tr.append($td2 + $td3 + $td4 + $td5 + $td6 + $td7 + $td8);
+                        $('#tbody').append($tr);
+                    }
+                }
+            });
+        })
 
         /**
-         * 动态渲染表格 - 显示设备所有参数列表（所有数据项）
+         * 判断errorItem数组是否包含该数据项名称（通过名称而不是id）
          */
-        $.ajax({
-            type: "get",
-            url: basePath + "/dataitemlist/getDataItemList",
-            contentType: "application/json",
-            dataType: "json",
-            data: {
-                "token": tokenValue,
-                "hash": "test",
-                "deviceid": deviceid,
-            },
-            success: function(response) {
-                console.log(response)
-                if (response.status != '100') {
-                    alert(response.msg);
-                    return;
-                }
-
-                /**
-                 * 测试样例（重构参数列表数组）
-                 */
-                response.data = [];
-                for (let index = 0; index < 3; index++) {
-                    var jsonString =
-                        `{"devid":1435066367,"deviceName":"ra-device","itemid":"1","config":"","datatype":"a","datatypeName":"数值","driverid":29,"driverName":"libtremoteplc","did":0,"itemname":"CSQ","itemalias":null,"readonly":0,"frequency":120000,"dataAddress":null,"hex":null,"precision":null}`;
-                    // 将上述字符串转成json
-                    var obj = JSON.parse(jsonString);
-                    // 添加到数组中
-                    response.data.push(obj);
-                }
-
-                console.log(response.data)
-                for (let i = 0; i < response.data.length; i++) {
-                    const element = response.data[i];
-
-                    var $tr = $('<tr></tr>');
-                    $tr.bind('click', function() {
-                        alert(123)
-                    })
-                    var $td3 = `<td data-label="数据项名称" class="layui-badge">${element.itemname}</td>`;
-                    var $td4 = `<td data-label="数据项别名">${element.itemalias}</td>`;
-                    if (element.itemalias == null) {
-                        $td4 = `<td data-label="数据项别名">暂无记录</td>`;
-                    }
-                    var $td5 = `<td data-label="数据类型名称">${element.datatypeName}</td>`;
-                    var $td6 = `<td data-label="驱动名称">${element.driverName}</td>`;
-                    var $td7 =
-                        `<td data-label="数据采集频率(ms)">${element.frequency}</td>`;
-                    var $td8 = `<td><button class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary
-                                        textACenter">可写</button> </td>`;
-                    if (element.readonly == 0) {
-                        $td8 = `<td><button
-                                        class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal
-                                        textACenter">只读</button> </td>`;
-                    }
-
-                    $tr.append($td3 + $td4 + $td5 + $td6 + $td7 + $td8);
-                    $('#tbody').append($tr);
+        function errorItemContains(itemname, list) {
+            for (let i = 0; i < list.length; i++) {
+                const element = list[i];
+                if (element == itemname) {
+                    return true;
                 }
             }
-        });
-
-        // 获取设备的报警信息
-        $.ajax({
-            type: "get",
-            url: basePath + "/alarm",
-            contentType: "application/json",
-            dataType: "json",
-            data: {
-                "token": tokenValue,
-                "hash": "test",
-                "devid": deviceid,
-            },
-            success: function(response) {
-                console.log(response);
-                if (response.data.list.length == 0) {
-                    $('#alarmInfo').val("暂无报警信息");
-                } else {
-                    $('#alarmInfo').val("测试")
-                }
-            }
-        });
+            return false;
+        }
 
         // // 获取设备的实时数据
         // $.ajax({

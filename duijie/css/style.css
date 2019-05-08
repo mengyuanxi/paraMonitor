@@ -102,7 +102,15 @@ body {
 }
 
 
-/*表格自适应*/
+/* 报警信息文本框样式 */
+
+.layui-textarea {
+    min-height: 300px;
+    margin-bottom: 2rem;
+}
+
+
+/* 表格自适应 */
 
 @media screen and (max-width: 600px) {
     #main table {
