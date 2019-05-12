@@ -166,16 +166,24 @@
                      * 生成测试样例（重构参数列表数组）
                      */
                     response.data = [];
+                    // 测试数值类型
                     for (let index = 0; index < 3; index++) {
                         var jsonString = `{"devid":1435066367,"deviceName":"ra-device","itemid":${index+1},"config":"","datatype":"a","datatypeName":"数值","driverid":29,"driverName":"libtremoteplc","did":0,"itemname":"COOLING WATER TEM${index}.","itemalias":null,"readonly":0,"frequency":120000,"dataAddress":null,"hex":null,"precision":null}`;
                         var obj = JSON.parse(jsonString); // 将上述字符串转成json
                         response.data.push(obj); // 添加到数组中
                     }
+                    // 测试开关类型
+                    for (let index = 0; index < 2; index++) {
+                        var jsonString = `{"devid":1435066367,"deviceName":"ra-device","itemid":${index+4},"config":"","datatype":"b","datatypeName":"开关量","driverid":29,"driverName":"libtremoteplc","did":0,"itemname":"开关量${index}.","itemalias":"测试开关量${index}","readonly":0,"frequency":120000,"dataAddress":null,"hex":null,"precision":null}`;
+                        var obj = JSON.parse(jsonString); // 将上述字符串转成json
+                        response.data.push(obj); // 添加到数组中
+                    }
+
+
 
                     // 动态渲染参数列表，并且判断是否报警而显示不同颜色
                     for (let i = 0; i < response.data.length; i++) {
                         const element = response.data[i];
-                        var errorFlag = 0;
                         var $tr = $('<tr> </tr>');
 
                         var $td2 = `<td data-label="数据项id" class="layui-badge layui-bg-green">${element.itemid}</td>`;
@@ -184,8 +192,6 @@
                         if (errorItemContains(element.itemname, errorItem)) {
                             $td2 = `<td data-label="数据项id" class="layui-badge">${element.itemid}</td>`;
                             $td3 = `<td data-label="数据项名称" class="layui-badge">${element.itemname}</td>`;
-                            errorFlag = 1;
-
                         }
                         var $td4 = `<td data-label="数据项别名">${element.itemalias}</td>`;
                         if (element.itemalias == null) {
@@ -203,8 +209,17 @@
                         }
                         // 绑定点击查看具体信息事件
                         $tr.bind('click', function() {
-                            window.location.href = "deviceItemDetail.html?deviceid=" + deviceid + "&itemid=" +
-                                element.itemid + "&error=" + errorFlag;
+                            // 如果是数值这一类数据项 - a，则跳转到deviceItemDetail.html页面
+                            // 如果是开关量这一类数据项 - b，则跳转到deviceItemDetail2.html页面
+                            if (element.datatype == 'a') {
+                                window.location.href = "deviceItemDetailVal.html?deviceid=" + deviceid + "&itemid=" +
+                                    element.itemid + "&itemname=" + element.itemname;
+                            } else if (element.datatype == 'b') {
+                                window.location.href = "deviceItemDetailOnOff.html?deviceid=" + deviceid + "&itemid=" +
+                                    element.itemid + "&itemname=" + element.itemname;
+                            }
+
+
                         })
                         $tr.append($td2 + $td3 + $td4 + $td5 + $td6 + $td7 + $td8);
                         $('#tbody').append($tr);

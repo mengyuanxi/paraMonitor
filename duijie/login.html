@@ -49,7 +49,7 @@
 
         $('#submit').click(function() {
             var username = $('#username').val();
-            var password = $('#password').val();
+            var password = $("input[name='password']").val();
             if (username == '' || password == '') {
                 //提示层msg
                 layer.open({

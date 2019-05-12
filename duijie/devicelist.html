@@ -61,9 +61,10 @@
     <script src="js/common.js"></script>
     <script>
         $(function() {
-            if (tokenValue == '') {
+            var tokenValue = cookie.get("tokenValue");
+            if (tokenValue == undefined) {
                 alert("您还未登录，请先登录");
-                return;
+                window.location.href = "login.html"
             }
 
             // 执行表格显示

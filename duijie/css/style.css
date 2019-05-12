@@ -140,3 +140,30 @@ body {
         font-weight: bold;
     }
 }
+
+
+/*  对index.html 下显示全部设备进行样式修改 */
+
+#chooseStation button {
+    width: 6.5rem;
+}
+
+#chooseStation p {
+    margin-top: 0.5rem;
+    font-size: 1.5rem;
+}
+
+
+/* 对每一类型内容做样式优化 */
+
+#chooseStation fieldset {
+    border-top: 1px dashed cadetblue;
+}
+
+#chooseStation legend {
+    margin-bottom: 15px;
+}
+
+#chooseStation .layui-col-xs6 {
+    height: 6rem;
+}

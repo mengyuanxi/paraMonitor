@@ -1,4 +1,5 @@
 function drawOldNode(data) {
+    console.log(data)
     var myChart = echarts.init(document.getElementById('node1'));
     // data = [
     //     ["18:20:11", 21],
@@ -11,7 +12,22 @@ function drawOldNode(data) {
     //     ["18:23:11", 23],
 
     // ];
-
+    var length = data.length;
+    // 这段数据的起始时间与终止时间
+    var fromTime = data[0][0];
+    var endTime = data[length - 1][0];
+    // 记录这段数据的0/1个数
+    var zero_value = 0;
+    var one_value = 0;
+    // 循环统计记录0/1个数
+    for (let i = 0; i < length; i++) {
+        const element = data[i];
+        if (element[1] == 1) {
+            one_value++;
+        } else if (element[0] == 0) {
+            zero_value++;
+        }
+    }
 
     var dateList = data.map(function(item) {
         return item[0];
@@ -21,42 +37,39 @@ function drawOldNode(data) {
     });
 
     option = {
-        // Make gradient line here
-        visualMap: [{
-            show: false,
-            type: 'continuous',
-            seriesIndex: 0,
-            min: 0,
-            max: 400
-        }],
+        color: ['#3398DB'],
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
         title: [{
             left: 'center',
-            text: '近12小时历史数据'
+            text: '最近6条数据显示'
         }],
-        tooltip: {
-            trigger: 'axis'
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
         },
         xAxis: [{
-            data: dateList,
-            splitLine: {
-                show: true
+            type: 'category',
+            data: [fromTime, "中间段", endTime],
+            axisTick: {
+                alignWithLabel: true
             }
         }],
-        yAxis: {
-            splitLine: {
-                show: true
-            }
-        },
-        grid: [{
-            bottom: '15%'
-        }, {
-            top: '15%'
+        yAxis: [{
+            type: 'value',
+            max: 10
         }],
         series: [{
-            type: 'line',
-            showSymbol: false,
-            data: valueList,
-            areaStyle: {}
+            name: '开关量',
+            type: 'bar',
+            barWidth: '60%',
+            data: [null, one_value, null]
         }]
     };
     myChart.setOption(option);
@@ -79,6 +92,7 @@ function drawCurrentNode(data) {
     //     ["18:23:11", 23],
 
     // ];
+
 
 
     var dateList = data.map(function(item) {

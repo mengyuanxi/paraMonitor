@@ -8,21 +8,7 @@
     <link rel="stylesheet" type="text/css" href="css/layui.css">
     <link rel="stylesheet" type="text/css" href="css/layui.mobile.css">
     <link rel="stylesheet" href="css/style.css">
-    <title>查看所有权限列表</title>
-    <style>
-        #chooseStation button {
-            width: 6.5rem;
-        }
-        
-        #chooseStation p {
-            margin-top: 1rem;
-            font-size: 1.5rem;
-        }
-        
-        #chooseStation .layui-col-xs6 {
-            height: 10.5rem;
-        }
-    </style>
+    <title>查看所有权限列表-数值</title>
 </head>
 
 <body>
@@ -36,20 +22,32 @@
         </div>
 
         <div id="chooseStation">
-            <div class="layui-col-xs6">
-                <button class="layui-btn"></button>
-                <p>00000号设备</p>
-            </div>
-            <div class="layui-col-xs6">
-                <button class="layui-btn"></button>
-                <p>111111号设备</p>
-            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>类型1</legend>
+                <div class="layui-col-xs6 layui-col-md4">
+                    <button class="layui-btn"></button>
+                    <p>00000号设备</p>
+                </div>
+                <div class="layui-col-xs6 layui-col-md4">
+                    <button class="layui-btn"></button>
+                    <p>111111号设备</p>
+                </div>
+                <div class="layui-col-xs6 layui-col-md4">
+                    <button class="layui-btn"></button>
+                    <p>00000号设备</p>
+                </div>
+                <div class="layui-col-xs6 layui-col-md4">
+                    <button class="layui-btn"></button>
+                    <p>111111号设备</p>
+                </div>
+            </fieldset>
+
         </div>
         <div class="layui-row">
             <div class="layui-col-xs12">
                 <button class="layui-btn layui-btn-radius layui-btn-warm textACenter" style="color:#000">
-                         告警信息
-                     </button>
+                    告警信息
+                </button>
                 <textarea id="alarmInfo" class="layui-textarea" readonly></textarea>
             </div>
         </div>
@@ -137,7 +135,7 @@
                             "htime":1532657631003,
                             "ruleid":6,
                             "severity":12,
-                            "thisDataItemName":"COOLING WATER TEMP.","thisDataItemValue":"7229.3078125"}`;
+                            "thisDataItemName":"COOLING WATER TEMP${index}.","thisDataItemValue":"7229.307812${index}"}`;
                             var testJson = JSON.parse(testJsonStr);
                             response.data.list.push(testJson);
                         }
