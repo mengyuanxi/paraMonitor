@@ -40,28 +40,11 @@ function getQueryString(name) {
 }
 
 /**
- * 
-//  */
-// function getHisDataOneItem(itemid) {
-//     $.ajax({
-//         type: "get",
-//         url: basePath + "/historydata",
-//         contentType: "application/json",
-//         dataType: "json",
-//         data: {
-//             "token": tokenValue,
-//             "hash": "test",
-//             "deviceid": deviceid,
-//             "datatitemid": itemid,
-//         },
-//         success: function (response) {
-
-//         }
-//     })
-// }
-
-// /**
-//  * 获取单个数据项的实时数据（配合图表实时刷新显示）
-//  */
-
-//  function getCurDataOneItem(itemid) {}
+ * 检查是否登录
+ */
+function checkLogin(tokenValue) {
+    if (tokenValue == undefined) {
+        alert("您还未登录，请先登录");
+        window.location.href = "login.html"
+    }
+}

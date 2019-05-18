@@ -22,11 +22,11 @@
         </div>
 
         <div id="chooseStation">
-            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <fieldset class="layui-elem-field layui-field-title">
                 <legend>类型1</legend>
                 <div class="layui-col-xs6 layui-col-md4">
                     <button class="layui-btn"></button>
-                    <p>00000号设备</p>
+                    <p>000000号设备</p>
                 </div>
                 <div class="layui-col-xs6 layui-col-md4">
                     <button class="layui-btn"></button>
@@ -34,11 +34,11 @@
                 </div>
                 <div class="layui-col-xs6 layui-col-md4">
                     <button class="layui-btn"></button>
-                    <p>00000号设备</p>
+                    <p>22222号设备</p>
                 </div>
                 <div class="layui-col-xs6 layui-col-md4">
                     <button class="layui-btn"></button>
-                    <p>111111号设备</p>
+                    <p>333333号设备</p>
                 </div>
             </fieldset>
 
@@ -54,122 +54,15 @@
     </div>
 
 
-    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/Outer/jquery-3.3.1.js"></script>
     <script src="js/common.js"></script>
+    <script src="js/index.js"></script>
     <script>
-        $(function() {
-            // 设置暂无报警的标志位
-            var noAlarmInfo = true;
-            var tokenValue = cookie.get("tokenValue");
-            if (tokenValue == '') {
-                alert("您还未登录，请先登录");
-                return;
-            }
-
-            /**
-             * 获取用户权限下的所有deviceid
-             */
-            var authorDevices = new Array();
-            $.ajax({
-                type: "get",
-                url: basePath + "/devicelist/getDeviceID",
-                contentType: "application/json",
-                dataType: "json",
-                data: {
-                    "token": tokenValue,
-                    "hash": "test",
-                },
-                async: false,
-                success: function(response) {
-                    // 是否响应成功
-                    if (response.status != '100') {
-                        alert(response.msg);
-                        return;
-                    }
-                    // 数据长度
-                    var dataLength = response.data.length
-                    if (dataLength == undefined) {
-                        authorDevices.push(response.data);
-                    } else {
-                        for (let index = 0; index < response.data.length; index++) {
-                            const element = response.data[index];
-                            authorDevices.push(element);
-                        }
-                    }
-                }
-            });
-
-            /*
-             * 获取所有权限设备的全部报警信息
-             */
-
-            // 对用户权限的所有设备进行遍历，查看其状态与报警情况。同时在列表渲染该设备按钮、以及按需显示报警信息
-            for (let i = 0; i < authorDevices.length; i++) {
-                const singleDevice = authorDevices[i];
-                const chooseStation = $('#chooseStation');
-                $.ajax({
-                    type: "get",
-                    url: basePath + "/alarm",
-                    contentType: "application/json",
-                    dataType: "json",
-                    data: {
-                        "token": tokenValue,
-                        "hash": "test",
-                        "devid": singleDevice,
-                    },
-                    success: function(response) {
-                        if (response.status != 100) {
-                            alert(response.msg);
-                            return;
-                        }
-
-                        /**
-                         * 生成测试样例，测试有报警的情况（生成某设备的报警列表json对象数组）
-                         */
-                        response.data.list = [];
-                        for (let index = 0; index < 3; index++) {
-                            var testJsonStr = `{"active": true, "alarmdesc": "冷却水温度过高","alarmid":209,
-                            "alarmname":"alarm",
-                            "deviceid":1435066367,
-                            "happentime":1532658207189,
-                            "htime":1532657631003,
-                            "ruleid":6,
-                            "severity":12,
-                            "thisDataItemName":"COOLING WATER TEMP${index}.","thisDataItemValue":"7229.307812${index}"}`;
-                            var testJson = JSON.parse(testJsonStr);
-                            response.data.list.push(testJson);
-                        }
-
-                        // 添加设备按钮放入列表；同时显示此设备的报警情况，放入文本框中
-                        var $colDiv = $('<div></div>');
-                        $colDiv.addClass("layui-col-xs6");
-                        var $devButton = $('<button></button>');
-                        var $devNameP = `<p>${singleDevice}号设备</p>`;
-                        // - 先统一设置为绿色按钮（无报警），如果有报警在之后修改为红色
-                        $devButton.addClass("layui-btn");
-                        // - 动态绑定 点击查看设备具体信息 的功能
-                        $devButton.bind('click', function() {
-                            window.location.href = "deviceDetail.html?deviceid=" + singleDevice;
-                        })
-
-                        // - 如果查找到的报警信息不为空且未恢复，则修改为红色报警按钮
-                        for (let j = 0; j < response.data.list.length; j++) {
-                            const oneAlarm = response.data.list[j];
-                            // 显示报警状态的告警信息
-                            if (oneAlarm.active == true) {
-                                $('#alarmInfo').append(oneAlarm.deviceid + "号设备：" + oneAlarm.alarmdesc + ",值为：" +
-                                    oneAlarm.thisDataItemValue + "\n");
-                                $devButton.addClass("layui-btn-danger")
-                            }
-                        }
-                        // - 添加该项进入设备列表
-                        $colDiv.append($devButton);
-                        $colDiv.append($devNameP);
-                        chooseStation.append($colDiv);
-                    }
-                });
-            }
-        })
+        var tokenValue = cookie.get("tokenValue");
+        // 检查是否登录成功
+        checkLogin(tokenValue);
+        // 获取用户权限下的所有deviceid,分设备类型渲染显示对应设备
+        getAuthDeviceList(tokenValue);
     </script>
 </body>
 
